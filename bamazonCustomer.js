@@ -18,11 +18,11 @@ connection.connect(function(err){
 })
 //start function queries from products table and displays its data.
 function start(){
-            connection.query("SELECT * FROM products", function(err, data){
+            connection.query("SELECT * FROM products", function(err, item){
                 console.log("\n"+"Id | Product | Department | Price | Quantity")
                 console.log("__________________________________________")
-                for(var i = 0; i < data.length; i++){
-                    console.log("\n"+data[i].id_item +" | "+ data[i].product_name +" | "+ data[i].department_name+" | "+data[i].price+" | "+data[i].stock_quantity)
+                for(var i = 0; i < item.length; i++){
+                    console.log("\n"+item[i].id_item +" | "+ item[i].product_name +" | "+ item[i].department_name+" | "+item[i].price+" | "+item[i].stock_quantity)
                     console.log("__________________________________________")
                 }
                 console.log("\n")
@@ -42,52 +42,42 @@ function start(){
         }
     ]).then(function(answers){
 
-connection.query("SELECT * FROM products", function (err, item){
-
-
 
 for(var i = 0; i < item.length; i++){
 
         if(Number(answers.purchase) === item[i].id_item){
 
-            
-            
+if(item[i].stock_quantity != null) {
 
-            if(item[i].stock_quantity >= 0 || item[i].stock_quantity >= answers.quantity) {
-                connection.query("UPDATE products SET ? WHERE?",[{
+            if(item[i].stock_quantity >= 0) {
+                connection.query("UPDATE products SET ? WHERE ?",[{
                     stock_quantity: item[i].stock_quantity - answers.quantity,
                 },
                 {
                     id_item: item[i].id_item
                 }
-            ], function(err, res){
-                
-            })
+            ]);
+
             console.log("Your Total is: " + answers.quantity * item[i].price)
             console.log(item[i].stock_quantity + " "+ item[i].product_name+ "s left in stock")
+        }
             if(item[i].stock_quantity <= 0) {
                 console.log("Sorry, we are out of stock.")
-                connection.query("UPDATE products SET ? WHERE?",[{
+                connection.query("UPDATE products SET ? WHERE ?",[{
                     stock_quantity: item[i].stock_quantity = null,
                 },
                 {
                     id_item: item[i].id_item
                 }
-            ], function(err, res){
-                
-            })
-            }
-        } else {
-            console.log(item[i].stock_quantity + " "+ item[i].product_name+ "s left in stock")
-        }
-        
-         
+            ])
+            } 
+        }else {
+            console.log("No "+ item[i].product_name+ "s left in stock, please come back later.")
         }
     }
-
+    }
         connection.end()
 
-    });
     
 });
 });
